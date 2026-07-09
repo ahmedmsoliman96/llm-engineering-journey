@@ -4,13 +4,13 @@ from playwright.sync_api import sync_playwright
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-def fetch_website_contents(url: str, max_chars=4000) -> str:
+def fetch_website_contents(url: str, max_chars=20000) -> str:
     """
     Launches a headless browser to extract clean text from a website.
     Handles dynamic content via Playwright and cleans noise via BeautifulSoup.
     Args:
         url (str): The target website address to scrape.
-        max_chars (int): The maximum number of returned string. Defaults to 4000.
+        max_chars (int): The maximum number of returned string. Defaults to 20,000.
     Returns:
         str: text content from the page, truncated max_chars.
     Raises:
