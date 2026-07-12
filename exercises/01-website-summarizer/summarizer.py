@@ -4,7 +4,7 @@ import sys
 import argparse
 
 from openai import OpenAI
-from utility import fetch_website_contents
+from utility import fetch_website_contents,validate_url
 from rich.console import Console
 from rich.markdown import Markdown
 
@@ -57,6 +57,12 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
+
+    try:
+        validate_url(args.url)
+    except RuntimeError as e:
+        logger.error(f"Invalid URL:{str(e)}")
+        sys.exit(1)
 
     LLM_BASE_URL = args.base_url
     LLM_API_KEY = os.getenv("LLM_API_KEY", "ollama")
