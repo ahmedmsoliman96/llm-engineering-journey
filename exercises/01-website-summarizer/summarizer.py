@@ -3,7 +3,7 @@ import logging
 import sys
 import argparse
 
-from openai import OpenAI
+from openai import APIConnectionError, APIStatusError, OpenAI
 from utility import fetch_website_contents,validate_url
 from rich.console import Console
 from rich.markdown import Markdown
@@ -30,8 +30,18 @@ def summarize(url:str, client:OpenAI, model:str, system_prompt:str, user_prompt:
             model = model,
             messages = messages_for(website_content, system_prompt, user_prompt)
         )
+        if not response.choices:
+            return "Failed to generate summary via LLM:\n *No response choices were returned.*"
         content = response.choices[0].message.content
         return content if content is not None else ""
+
+    except APIConnectionError as e:
+        logger.error(f"Could not connect to LLM backend: {str(e)}")
+        return (f"Failed to generate summary via LLM:\n "
+                f"*Could not connect to the LLM backend at the configured base URL: {str(e)}*")
+    except APIStatusError as e:
+        logger.error(f"LLM backend returned an error: {str(e)}")
+        return f"Failed to generate summary via LLM:\n *LLM backend returned an error: {str(e)}*"
     except Exception as e:
         logger.error(f"LLM generation failed: {str(e)}")
         return f"Failed to generate summary via LLM:\n *{str(e)}*"
@@ -61,15 +71,13 @@ if __name__ == "__main__":
     try:
         validate_url(args.url)
     except RuntimeError as e:
-        logger.error(f"Invalid URL:{str(e)}")
+        logger.error(f"Invalid URL: {str(e)}")
         sys.exit(1)
 
-    LLM_BASE_URL = args.base_url
     LLM_API_KEY = os.getenv("LLM_API_KEY", "ollama")
-    LLM_MODEL = args.model
 
     target_url = args.url
-    client = OpenAI(base_url=LLM_BASE_URL,api_key=LLM_API_KEY)
+    client = OpenAI(base_url=args.base_url,api_key=LLM_API_KEY)
 
     system_prompt = (
         "You are a helpful AI assistant that analyzes the contents of a website, "
@@ -79,4 +87,4 @@ if __name__ == "__main__":
 
     user_prompt = "please provide a concise summary emphasizing key features of the following website content."
 
-    display_summary(target_url,client,LLM_MODEL,system_prompt,user_prompt)
+    display_summary(target_url,client,args.model,system_prompt,user_prompt)
