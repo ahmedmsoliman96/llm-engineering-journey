@@ -21,6 +21,8 @@ def fetch_website_contents(url: str, max_chars=20000) -> str:
     """
     #1. Start an isolated Playwright browser session
 
+    validate_url(url)
+
     with sync_playwright() as p:
         logger.info(f"Launching browser to fetch: {url}")
         browser = p.chromium.launch(headless=True)
