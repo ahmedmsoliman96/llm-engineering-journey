@@ -4,6 +4,7 @@ from playwright.sync_api import sync_playwright
 
 logger = logging.getLogger(__name__)
 
+NOISE_TAGS = ["script", "style", "img", "input", "nav", "footer", "header", "svg", "noscript", "form"]
 
 def fetch_website_contents(url: str, max_chars=20000) -> str:
     """
@@ -49,7 +50,7 @@ def fetch_website_contents(url: str, max_chars=20000) -> str:
     title = soup.title.get_text(strip=True) if soup.title else "No title found"
 
     if soup.body:
-        for irrelevant in soup.body(["script", "style", "img", "input"]):
+        for irrelevant in soup.body(NOISE_TAGS):
             irrelevant.decompose()
 
         text = soup.body.get_text(separator="\n", strip=True)
