@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
@@ -58,3 +59,18 @@ def fetch_website_contents(url: str, max_chars=20000) -> str:
         text = ""
 
     return f"TITLE: {title}\n\n{text}"[:max_chars]
+
+
+def validate_url(url: str) -> None:
+    """
+    Validates that a URL is well-formed and uses http/https.
+    Args:
+        url (str): The URL to validate.
+    Raises:
+        RuntimeError: If the URL has no scheme, an unsupported scheme, or no domain.
+    """
+    parsed_url = urlparse(url)
+    if parsed_url.scheme not in ("http", "https"):
+        raise RuntimeError(f"Invalid URL '{url}': must start with http:// or https://")
+    if not parsed_url.netloc:
+        raise RuntimeError(f"Invalid URL '{url}': missing a domain")
