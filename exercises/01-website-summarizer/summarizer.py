@@ -4,7 +4,7 @@ import sys
 import argparse
 
 from openai import APIConnectionError, APIStatusError, OpenAI
-from utility import fetch_website_contents,validate_url
+from utility import fetch_website_contents, validate_url
 from rich.console import Console
 from rich.markdown import Markdown
 
@@ -76,7 +76,6 @@ if __name__ == "__main__":
 
     LLM_API_KEY = os.getenv("LLM_API_KEY", "ollama")
 
-    target_url = args.url
     client = OpenAI(base_url=args.base_url,api_key=LLM_API_KEY)
 
     system_prompt = (
@@ -87,4 +86,4 @@ if __name__ == "__main__":
 
     user_prompt = "please provide a concise summary emphasizing key features of the following website content."
 
-    display_summary(target_url,client,args.model,system_prompt,user_prompt)
+    display_summary(args.url,client,args.model,system_prompt,user_prompt)
