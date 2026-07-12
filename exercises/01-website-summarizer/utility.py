@@ -17,11 +17,12 @@ def fetch_website_contents(url: str, max_chars=20000) -> str:
     Returns:
         str: text content from the page, truncated max_chars.
     Raises:
-        RuntimeError: If the browser cannot connect to or scrape the URL.
+        RuntimeError: If the browser cannot connect, failed to scrape the URL or the URL is malformed.
     """
-    #1. Start an isolated Playwright browser session
 
     validate_url(url)
+
+    #1. Start an isolated Playwright browser session
 
     with sync_playwright() as p:
         logger.info(f"Launching browser to fetch: {url}")
