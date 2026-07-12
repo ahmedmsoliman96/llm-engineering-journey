@@ -1,7 +1,7 @@
 import logging
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +20,7 @@ def fetch_website_contents(url: str, max_chars=20000) -> str:
         RuntimeError: If the browser cannot connect to or scrape the URL.
     """
     #1. Start an isolated Playwright browser session
+
     with sync_playwright() as p:
         logger.info(f"Launching browser to fetch: {url}")
         browser = p.chromium.launch(headless=True)
@@ -40,6 +41,9 @@ def fetch_website_contents(url: str, max_chars=20000) -> str:
             page.wait_for_timeout(1500)
             html_content = page.content()
             logger.info("Successfully fetched HTML content.")
+        except PlaywrightTimeoutError as e:
+            logger.error(f"Timed out loading {url}: {str(e)}")
+            raise RuntimeError(f"Timed out while loading the page (30s limit): {url}")
         except Exception as e:
             logger.error(f"Failed to scrape website {url}: {str(e)}")
             raise RuntimeError(f"Error capturing page content: {str(e)}")
