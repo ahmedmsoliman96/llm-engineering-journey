@@ -2,8 +2,9 @@ import logging
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
+
+
 def fetch_website_contents(url: str, max_chars=20000) -> str:
     """
     Launches a headless browser to extract clean text from a website.
@@ -23,9 +24,18 @@ def fetch_website_contents(url: str, max_chars=20000) -> str:
         context = browser.new_context(
             user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         )
+
+        context.route(
+            "**/*",
+            lambda route: route.abort()
+            if route.request.resource_type in ("image", "media", "font", "stylesheet")
+            else route.continue_(),
+        )
+
         page = context.new_page()
         try:
-            page.goto(url, wait_until="networkidle", timeout=30000)
+            page.goto(url, wait_until="domcontentloaded", timeout=30000)
+            page.wait_for_timeout(1500)
             html_content = page.content()
             logger.info("Successfully fetched HTML content.")
         except Exception as e:
@@ -36,7 +46,7 @@ def fetch_website_contents(url: str, max_chars=20000) -> str:
 
     # 2. Parse and prune the rendered HTML with BeautifulSoup
     soup = BeautifulSoup(html_content, "html.parser")
-    title = soup.title.string if soup.title else "No title found"
+    title = soup.title.get_text(strip=True) if soup.title else "No title found"
 
     if soup.body:
         for irrelevant in soup.body(["script", "style", "img", "input"]):
