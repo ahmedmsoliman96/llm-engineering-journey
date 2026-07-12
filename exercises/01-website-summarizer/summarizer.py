@@ -1,6 +1,8 @@
 import os
 import logging
 import sys
+import argparse
+
 from openai import OpenAI
 from utility import fetch_website_contents
 from rich.console import Console
@@ -42,18 +44,30 @@ def display_summary(url:str, client:OpenAI, model:str, system_prompt:str, user_p
     console.print(Markdown(summary))
     console.print("\n[bold cyan]============================[/bold cyan]")
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Summarize a webpage using an LLM model (local or cloud).")
+    parser.add_argument("url", nargs="?", default="https://news.ycombinator.com", help="Target URL to summarize.")
+    parser.add_argument("--model", default=os.getenv("LLM_MODEL", "llama3.2"), help="LLM model name.")
+    parser.add_argument(
+        "--base-url",
+        default=os.getenv("LLM_BASE_URL", "http://localhost:11434/v1"),
+        help="Base URL of the OpenAI-compatible LLM endpoint (local or cloud).",
+    )
+    return parser.parse_args()
+
 if __name__ == "__main__":
-    OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
-    OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY", "ollama")
-    LLM_MODEL = os.getenv("LLM_MODEL", "llama3.2")
+    args = parse_args()
 
-    target_url = sys.argv[1] if len(sys.argv) > 1 else "https://ollama.com"
+    LLM_BASE_URL = args.base_url
+    LLM_API_KEY = os.getenv("LLM_API_KEY", "ollama")
+    LLM_MODEL = args.model
 
-    client = OpenAI(base_url=OLLAMA_BASE_URL,api_key=OLLAMA_API_KEY)
+    target_url = args.url
+    client = OpenAI(base_url=LLM_BASE_URL,api_key=LLM_API_KEY)
 
     system_prompt = (
         "You are a helpful AI assistant that analyzes the contents of a website, "
-        "and delivers a structured, high-quality summary. Ignore navigation headers. "
+        "and delivers a structured, high-quality summary. "
         "Respond strictly in clean markdown syntax. Do not wrap the markdown in a code block"
     )
 
