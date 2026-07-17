@@ -4,6 +4,7 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "beautifulsoup4>=4.15.0",
+    "gradio>=6.20.0",
     "openai>=2.44.0",
     "playwright>=1.61.0",
     "rich>=15.0.0",
