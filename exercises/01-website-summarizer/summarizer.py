@@ -2,6 +2,7 @@ import os
 import logging
 import sys
 import argparse
+from dotenv import load_dotenv
 
 from openai import APIConnectionError, APIStatusError, OpenAI
 from utility import fetch_website_contents, validate_url
@@ -66,6 +67,9 @@ def parse_args():
     return parser.parse_args()
 
 if __name__ == "__main__":
+
+    load_dotenv()
+
     args = parse_args()
 
     try:
