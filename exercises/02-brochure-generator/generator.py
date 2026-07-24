@@ -1,5 +1,6 @@
 import os
 import logging
+from dotenv import load_dotenv
 
 import gradio as gr
 from openai import APIConnectionError, APIStatusError, OpenAI
@@ -82,6 +83,8 @@ def display_brochure(client:OpenAI, default_model:str, system_prompt:str, user_p
     view.launch(inbrowser = True)
 
 if __name__ == "__main__":
+
+    load_dotenv()
 
     DEFAULT_MODEL = os.getenv("LLM_MODEL", "llama3.2")
     DEFAULT_BASE_URL = os.getenv("LLM_BASE_URL", "http://localhost:11434/v1")
