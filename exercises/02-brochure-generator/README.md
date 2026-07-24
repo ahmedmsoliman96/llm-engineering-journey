@@ -22,6 +22,7 @@ Ensure you have synchronized the root environment via `uv sync` from the main pr
 *   **`playwright`** — Handles dynamic webpage rendering.
 *   **`beautifulsoup4`** — Parses HTML and extracts clean, raw text from web pages.
 *   **`gradio`** — Provides the browser-based UI and streams the generated brochure.
+*   **`python-dotenv`** — Loads environment variables from a local `.env` file.
 
 #### ⚙️ Configuration
 The model name can be changed per request directly in the browser. The backend base URL and API key are fixed at startup via environment variables only.
