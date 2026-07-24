@@ -3,9 +3,21 @@ name = "llm-engineering-journey"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "accelerate>=1.14.0",
     "beautifulsoup4>=4.15.0",
     "gradio>=6.20.0",
     "openai>=2.44.0",
     "playwright>=1.61.0",
+    "python-dotenv>=1.2.2",
     "rich>=15.0.0",
+    "torch>=2.11.0",
+    "transformers>=5.14.1",
 ]
+
+[[tool.uv.index]]
+name = "pytorch-cuda"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cuda" }]
