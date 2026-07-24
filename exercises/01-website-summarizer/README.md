@@ -22,6 +22,7 @@ Ensure you have synchronized the root environment via `uv sync` from the main pr
 *   **`playwright`** — Handles dynamic webpage rendering.
 *   **`beautifulsoup4`** — Parses HTML and extracts clean, raw text from web pages.
 *   **`rich`** — Renders the final structured Markdown beautifully directly within the CLI terminal.
+*   **`python-dotenv`** — Loads environment variables from a local `.env` file.
 
 #### ⚙️ Configuration
 Settings can be overridden via environment variables or command-line flags. CLI flags take priority over environment variables, which take priority over the built-in defaults.
