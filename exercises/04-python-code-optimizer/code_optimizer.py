@@ -133,7 +133,7 @@ def display_code(client: OpenAI, model: str, system_prompt: str, user_prompt: st
         return optimize(code, client, model, system_prompt, user_prompt)
 
     with gr.Blocks(
-        title="🖥️ python code optimization",
+        title="🖥️ Python code optimization",
         css="""
         #original_code .cm-editor,
         #optimized_code .cm-editor {
@@ -152,7 +152,7 @@ def display_code(client: OpenAI, model: str, system_prompt: str, user_prompt: st
             with gr.Column(scale=6):
                 original_python = gr.Code(
                     value="",
-                    label="original python code",
+                    label="original Python code",
                     language="python",
                     lines=26,
                     interactive=True,
@@ -161,7 +161,7 @@ def display_code(client: OpenAI, model: str, system_prompt: str, user_prompt: st
             with gr.Column(scale=6):
                 optimized_python = gr.Code(
                     value="",
-                    label="optimized python code",
+                    label="optimized Python code",
                     language="python",
                     lines=26,
                     interactive=True,
