@@ -1,8 +1,8 @@
 import argparse
-import glob
 import logging
 import os
 import shutil
+from pathlib import Path
 
 from dotenv import load_dotenv
 from langchain_chroma import Chroma
@@ -19,16 +19,16 @@ def len_token(text: str, tokenizer: PreTrainedTokenizer) -> int:
     return len(tokenizer.encode(text, add_special_tokens=False))
 
 
-def load_documents(source_dir: str) -> list:
+def load_documents(source_dir: Path) -> list:
     """Load every .md file under source_dir, tagging each with doc_type
     from its parent folder name — mirrors the tutor's day1.ipynb loader."""
     documents = []
-    subfolders = glob.glob(f"{source_dir}/*")
+    subfolders = [f for f in source_dir.iterdir() if f.is_dir()]
 
     for folder in subfolders:
-        doc_type = os.path.basename(folder)
+        doc_type = folder.name
         loader = DirectoryLoader(
-            folder,
+            str(folder),
             glob="**/*.md",
             loader_cls=TextLoader,
             loader_kwargs={"encoding": "utf-8"},
@@ -40,7 +40,7 @@ def load_documents(source_dir: str) -> list:
 
     logger.info(
         f"Loaded {len(documents)} documents across {len(subfolders)} doc_types: "
-        f"{[os.path.basename(f) for f in subfolders]}"
+        f"{[f.name for f in subfolders]}"
     )
 
     return documents
@@ -61,18 +61,18 @@ def chunk_documents(documents: list, chunk_size: int, chunk_overlap: int, tokeni
     return chunks
 
 
-def build_vectorstore(chunks: list, persist_directory: str, embedding_model: str):
+def build_vectorstore(chunks: list, persist_directory: Path, embedding_model: str):
     embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
 
     # Wipe any existing collection at this path so we don't mix embedding spaces.
-    if os.path.exists(persist_directory):
+    if persist_directory.exists():
         shutil.rmtree(persist_directory)
         logger.info(f"Removed existing vector store at {persist_directory}")
 
     vectorstore = Chroma.from_documents(
         documents=chunks,
         embedding=embeddings,
-        persist_directory=persist_directory,
+        persist_directory=str(persist_directory)
     )
 
     logger.info(f"Persisted {len(chunks)} chunks to '{persist_directory}' using {embedding_model}")
@@ -94,17 +94,18 @@ def build_vectorstore(chunks: list, persist_directory: str, embedding_model: str
 
 
 def parse_args():
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-
+    script_dir = Path(__file__).resolve().parent
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--source",
-        default=os.path.join(script_dir, "knowledge-base"),
+        type=Path,
+        default=script_dir / "knowledge-base",
         help="Path to the knowledge-base folder (subfolders = doc_type)"
     )
     parser.add_argument(
         "--persist",
-        default=os.path.join(script_dir, "vector_db"),
+        type=Path,
+        default=script_dir / "vector_db",
         help="Where to write the Chroma collection"
     )
 
