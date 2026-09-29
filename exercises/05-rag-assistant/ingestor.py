@@ -99,6 +99,10 @@ def build_vectorstore(chunks: list, persist_directory: Path, embedding_model: st
 
     # Wipe any existing collection at this path so we don't mix embedding spaces.
     if persist_directory.exists():
+        if not (persist_directory / "chroma.sqlite3").exists():
+            raise RuntimeError(
+                f"{persist_directory} doesn't look like a Chroma store; refusing to delete it"
+            )
         shutil.rmtree(persist_directory)
         logger.info(f"Removed existing vector store at {persist_directory}")
 
