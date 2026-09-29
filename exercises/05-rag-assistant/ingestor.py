@@ -95,7 +95,7 @@ def build_vectorstore(chunks: list, persist_directory: Path, embedding_model: st
     Returns:
         Chroma: The initialized and populated Chroma vector store instance.
     """
-    embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
+    embeddings = HuggingFaceEmbeddings(model_name=embedding_model, encode_kwargs={"normalize_embeddings": True})
 
     # Wipe any existing collection at this path so we don't mix embedding spaces.
     if persist_directory.exists():
