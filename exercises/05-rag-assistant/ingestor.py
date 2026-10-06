@@ -38,7 +38,7 @@ def load_documents(source_dir: Path) -> list:
     """
     documents = []
     subfolders = [f for f in source_dir.iterdir() if f.is_dir()]
-
+    resolved_source_dir = source_dir.resolve()
     for folder in subfolders:
         doc_type = folder.name
         loader = DirectoryLoader(
@@ -50,6 +50,13 @@ def load_documents(source_dir: Path) -> list:
         folder_docs = loader.load()
         for doc in folder_docs:
             doc.metadata["doc_type"] = doc_type
+            doc.metadata["source"] = (
+                Path(doc.metadata["source"])
+                .resolve()
+                .relative_to(resolved_source_dir)
+                .as_posix()
+            )
+
         documents.extend(folder_docs)
 
     logger.info(
