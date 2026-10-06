@@ -13,7 +13,7 @@ def setup_logging(level: str | None = None):
             Defaults to the LOG_LEVEL environment variable, or "INFO" if that is not set.
     """
     logging.basicConfig(
-        level=level or os.getenv("LOG_LEVEL", "INFO"),
+        level=(level or os.getenv("LOG_LEVEL", "INFO")).upper(),
         format="%(asctime)s | %(levelname)-7s | %(threadName)s | %(name)s | %(message)s",
         stream=sys.stdout,
         force=True,
