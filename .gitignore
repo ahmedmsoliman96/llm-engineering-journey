@@ -3,3 +3,6 @@
 venv/
 .idea/
 __pycache__/
+exercises/05-rag-assistant/vector_db/
+exercises/05-rag-assistant/runs/
+exercises/05-rag-assistant/retrieval_runs/
