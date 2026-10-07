@@ -9,7 +9,7 @@ def setup_logging(level: str | None = None):
     """Configures root logging to print to the console.
 
     Args:
-        level (str, optional): Log level name.
+        level (str | None): Log level name.
             Defaults to the LOG_LEVEL environment variable, or "INFO" if that is not set.
     """
     logging.basicConfig(
