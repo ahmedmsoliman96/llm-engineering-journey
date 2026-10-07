@@ -21,6 +21,7 @@ def len_token(text: str, tokenizer: PreTrainedTokenizer) -> int:
     Args:
         text (str): The input text to measure.
         tokenizer (PreTrainedTokenizer): The tokenizer instance used for encoding.
+
     Returns:
         int: The number of tokens in the text, excluding special tokens.
     """
@@ -28,11 +29,11 @@ def len_token(text: str, tokenizer: PreTrainedTokenizer) -> int:
 
 
 def load_documents(source_dir: Path) -> list:
-    """Load every .md file under source_dir, tagging each with doc_type
-    from its parent folder name.
+    """Load every .md file under source_dir, tagging each with doc_type from its parent folder name.
 
     Args:
         source_dir (Path): The root directory containing subfolders of Markdown files.
+
     Returns:
         list: A collection of loaded document objects with assigned metadata.
     """
@@ -75,6 +76,7 @@ def chunk_documents(documents: list, chunk_size: int, chunk_overlap: int, tokeni
         chunk_size (int): The maximum size of each chunk measured in tokens.
         chunk_overlap (int): The number of overlapping tokens between consecutive chunks.
         tokenizer (PreTrainedTokenizer): The tokenizer used to calculate token-based lengths.
+
     Returns:
         list: The resulting text chunks derived from the documents.
     """
@@ -99,8 +101,13 @@ def build_vectorstore(chunks: list, persist_directory: Path, embedding_model: st
         chunks (list): The document chunks to embed and store.
         persist_directory (Path): The file path where the Chroma collection will be saved.
         embedding_model (str): The name of the Hugging Face embedding model.
+
     Returns:
         Chroma: The initialized and populated Chroma vector store instance.
+
+    Raises:
+        RuntimeError: If the persistence directory exists but lacks 'chroma.sqlite3',
+            refusing to delete a non-Chroma directory.
     """
     embeddings = HuggingFaceEmbeddings(model_name=embedding_model, encode_kwargs={"normalize_embeddings": True})
 
