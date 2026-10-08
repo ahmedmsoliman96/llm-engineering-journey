@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 import os
 import shutil
@@ -140,6 +141,9 @@ def build_vectorstore(chunks: list, persist_directory: Path, embedding_model: st
             logger.info(f"There are {count:,} vectors, but could not retrieve sample embeddings")
     else:
         logger.info("vector store is empty")
+
+    with open(persist_directory / "manifest.json", "w", encoding="utf-8") as f:
+        json.dump({"embedding_model": embedding_model}, f, ensure_ascii=False, indent=2)
 
     return vectorstore
 
