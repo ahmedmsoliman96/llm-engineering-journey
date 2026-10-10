@@ -1,0 +1,9 @@
+{
+  "config": {
+    "use_hybrid": true,
+    "rerank_method": "cross_encoder",
+    "rewrite_enabled": true,
+    "candidate_k": 20,
+    "final_k": 10
+  }
+}
